@@ -1,0 +1,42 @@
+ManifestFileVersion: 0
+CRC: 123117414
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 11dfa50de26409f6cd64df66340187b9
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 31f17cb303170f57e8801f0b39a09365
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+- Class: 241
+  Script: {instanceID: 0}
+- Class: 243
+  Script: {instanceID: 0}
+- Class: 245
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Mods/YippeekeyAssets/NetworkHandlerYippeeKey.prefab
+- Assets/Mods/YippeekeyAssets/YippeSound.prefab
+Dependencies: []
