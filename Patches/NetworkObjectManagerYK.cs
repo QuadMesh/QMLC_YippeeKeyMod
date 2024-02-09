@@ -55,10 +55,16 @@ namespace YippeeKey.Patches
 
         }
 
-        public static void SendEventToServer(string eventName)
+        public static void SendYippeeEventToServer(string eventName)
         {
             YippeeKeyPlugin.Instance.Log("Sending event to rest of lobby.");
             NetworkHandlerYP.Instance.ScreamYippeeServerRPC(eventName);
+        }
+
+        public static void SendYippeeDeadEventToServer()
+        {
+            YippeeKeyPlugin.Instance.Log("Sending event to rest of lobby.");
+            NetworkHandlerYP.Instance.ScreamYippeeDeadServerRPC();
         }
 
         public static void playYippeeAtPlayer(ref string playerName)
@@ -98,6 +104,26 @@ namespace YippeeKey.Patches
             
             YippeeKeyPlugin.Instance.Log("Yippeed in the world, let's see where this goes...");
             RoundManager.Instance.PlayAudibleNoise(playerTransform.position, YippeeSyncedConfig.Instance.EnemyAIDetectionRange.Value, YippeeSyncedConfig.Instance.EnemyAIDetectionVolume.Value);
+        }
+
+        public static void playYippeeAtMousePos()
+        {
+            PlayerControllerB localPlayer = GameNetworkManager.Instance.localPlayerController;
+            if (localPlayer.isPlayerDead) {
+                YippeeKeyPlugin.Instance.Log("playing the effect.");
+                GameObject yippee2D = (GameObject)YippeeKeyPlugin.Instance.MainAssetBundle.LoadAsset("YippeSound2D");
+                yippee2D.AddComponent<ParticleObliterator2D>();
+                Camera camera = StartOfRound.Instance.activeCamera;
+
+                Vector3 spawnPos = camera.transform.position;
+                spawnPos.z += 10;
+
+                GameObject.Instantiate(yippee2D, spawnPos, camera.transform.rotation, camera.transform);
+            }
+            else
+            {
+                YippeeKeyPlugin.Instance.Log("Not dead yet, not playing that effect.");
+            }
         }
 
         static GameObject? networkPrefab = null;

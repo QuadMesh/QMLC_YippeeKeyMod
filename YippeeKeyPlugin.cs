@@ -20,7 +20,7 @@ namespace YippeeKey
 
         public const string GUID = "QMLCYipeeKey_plugin";
         public const string Name = "Yippee key";
-        public const string Version = "1.1.0.0";
+        public const string Version = "1.2.0.0";
 
         //AssetBundle
         public AssetBundle? MainAssetBundle;

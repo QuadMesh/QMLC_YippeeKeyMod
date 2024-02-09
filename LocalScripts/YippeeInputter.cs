@@ -15,6 +15,12 @@ namespace YippeeKey.LocalScripts
 
         private PlayerControllerB _localPlayer;
 
+        private bool cooldownActive = false;
+
+        private float cooldown = YippeeSyncedConfig.Instance.CooldownTime.Value;
+
+        float CoolDownStartTime => YippeeSyncedConfig.Instance.CooldownTime.Value;
+
         private void Awake()
         {
             _localPlayer = GetComponent<PlayerControllerB>();
@@ -23,19 +29,65 @@ namespace YippeeKey.LocalScripts
         //Guard clauses incoming!!
         public void Update()
         {
+            ManageCooldown();
+            
+            //If both cooldown is enabled AND the cooldown is active
+            if (YippeeSyncedConfig.Instance.CooldownEnabled.Value && cooldownActive) return;
             //Input
             if (!UnityInput.Current.GetKeyDown(YippeeSyncedConfig.Default.ConfigKey.Value)) return;
             //Is local (very important)
             if (!IsLocal()) return;
             //Is alive
-            if (GameNetworkManager.Instance.localPlayerController.isPlayerDead) return;
+            if (GameNetworkManager.Instance.localPlayerController.isPlayerDead)
+            {
+                CheckDeadYippe();
+                return;
+            }
             //Is in terminal
             if (GameNetworkManager.Instance.localPlayerController.inTerminalMenu) return;
             //Is in menu
             if (GameNetworkManager.Instance.localPlayerController.quickMenuManager.isMenuOpen) return;
 
             //Finally, run the event.
-            NetworkObjectManagerYK.SendEventToServer(GameNetworkManager.Instance.localPlayerController.gameObject.name);
+            NetworkObjectManagerYK.SendYippeeEventToServer(GameNetworkManager.Instance.localPlayerController.gameObject.name);
+            //Restart cooldown.
+            if (YippeeSyncedConfig.Instance.CooldownEnabled.Value)
+            {
+                cooldownActive = true;
+                YippeeKeyPlugin.Instance.Log("Cooldown active");
+            }
+        }
+
+        private void ManageCooldown()
+        {
+            //If the cooldown is active
+            if (cooldownActive)
+            {
+                //Count down the timer
+                cooldown -= Time.deltaTime;
+                YippeeKeyPlugin.Instance.Log($"{cooldown}");
+                if (cooldown <= 0)
+                {
+                    //Reset timer, wait for input.
+                    cooldownActive = false;
+                    cooldown = CoolDownStartTime;
+                    YippeeKeyPlugin.Instance.Log("Cooldown has wore off, time to Yippee!");
+                }
+                return;
+            }
+        }
+
+        private void CheckDeadYippe()
+        {
+            if (GameNetworkManager.Instance.localPlayerController.quickMenuManager.isMenuOpen) return;
+            //Finally, run the event.
+            NetworkObjectManagerYK.SendYippeeDeadEventToServer();
+            //Restart cooldown.
+            if (YippeeSyncedConfig.Instance.CooldownEnabled.Value)
+            {
+                cooldownActive = true;
+                YippeeKeyPlugin.Instance.Log("Cooldown active");
+            }
         }
 
         /// <summary>

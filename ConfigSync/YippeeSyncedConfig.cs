@@ -13,6 +13,7 @@ using System.Text;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.UIElements.UIR.Allocator2D;
 
 namespace YippeeKey.ConfigSync
 {
@@ -24,6 +25,8 @@ namespace YippeeKey.ConfigSync
         [DataMember] public SyncedEntry<bool> NotifyEnemies { get; private set; }
         [DataMember] public SyncedEntry<int> EnemyAIDetectionRange { get; private set; }
         [DataMember] public SyncedEntry<float> EnemyAIDetectionVolume { get; private set; }
+        [DataMember] public SyncedEntry<bool> CooldownEnabled { get; private set; }
+        [DataMember] public SyncedEntry<float> CooldownTime { get; private set; }
         //Keycode, might be replaced with inpututils
         public ConfigEntry<KeyCode> ConfigKey { get; private set; }
         //Debug config, usable for debugging, not for public use.
@@ -49,6 +52,16 @@ namespace YippeeKey.ConfigSync
                 "Notify Enemy AI (HOST ONLY)",
                 true,
                 "Notify Enemies when someone shouts 'Yippee!'. This setting will only apply if you are the host.");
+
+            CooldownEnabled = cfg.BindSyncedEntry("Gameplay",
+                "Yippee cooldown (HOST ONLY)",
+            false,
+               "Enables cooldowns when you are hosting the instance");
+
+            CooldownTime = cfg.BindSyncedEntry("Gameplay",
+                "Yippe cooldown time",
+                2f,
+                "The time (in seconds) it will take for the cooldown to stop");
 
             EnemyAIDetectionRange = cfg.Bind("Gameplay Advanced",
                 "EnemyAI detection range (HOST ONLY)",
@@ -141,11 +154,13 @@ namespace YippeeKey.ConfigSync
             {
                 SyncInstance(data);
                 YippeeKeyPlugin.Instance.Log("Config Synced succesfully!");
-                YippeeKeyPlugin.Instance.Log($"Default config working? {(YippeeSyncedConfig.Default == null ? "Nope" : "Yes!")}");
-                YippeeKeyPlugin.Instance.Log($"Synced config working? {(YippeeSyncedConfig.Instance == null ? "Nope" : "Yes!")}");
+                YippeeKeyPlugin.Instance.Log($"Default config working? {(Default == null ? "Nope" : "Yes!")}");
+                YippeeKeyPlugin.Instance.Log($"Synced config working? {(Instance == null ? "Nope" : "Yes!")}");
                 YippeeKeyPlugin.Instance.Log($"AIdistance:\nlocal:{Default.EnemyAIDetectionRange.Value}\nSynced:{Instance.EnemyAIDetectionRange.Value}");
                 YippeeKeyPlugin.Instance.Log($"AIVolume:\nlocal:{Default.EnemyAIDetectionVolume.Value}\nSynced:{Instance.EnemyAIDetectionVolume.Value}");
                 YippeeKeyPlugin.Instance.Log($"NotifyAI:\nlocal:{Default.NotifyEnemies.Value}\nSynced:{Instance.NotifyEnemies.Value}");
+                YippeeKeyPlugin.Instance.Log($"CooldownEnabled:\nlocal:{Default.CooldownEnabled.Value}\nSynced:{Instance.CooldownEnabled.Value}");
+                YippeeKeyPlugin.Instance.Log($"CooldownTime:\nlocal:{Default.CooldownTime.Value}\nSynced:{Instance.CooldownTime.Value}");
             }
             catch (Exception e)
             {
