@@ -1,6 +1,23 @@
 # Changelog
 
 <details>
+<summary>1.2.0</summary>
+
+## Added
+
+- Dead players can now 'Yippee' to eachother!
+- Cooldown config for those who dislike spamming. Please note: this is Host controlled, make sure to ask the host to enable cooldowns if you really dislike it. Cooldown is **OFF** by default
+- Cooldown time for set cooldown, defaults to 2 seconds.
+
+## Changed
+
+- changed 'Yippee' sound to one with less clicky audio
+
+### Enjoy!!
+
+</details>
+
+<details>
 <summary>1.1.0</summary>
 
 ## Added
