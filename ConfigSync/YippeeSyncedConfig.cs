@@ -8,6 +8,7 @@ using LethalLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using Unity.Collections;
@@ -93,6 +94,18 @@ namespace YippeeKey.ConfigSync
                 "Show Debug Messages",
                 false,
                 "Whether or not debug messages appear inside the log");
+
+            RemoveOrphans(cfg);
+        }
+
+        void RemoveOrphans(ConfigFile config)
+        {
+            PropertyInfo orphanedEntriesProp = config.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(config, null);
+
+            orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
+            config.Save();
         }
 
         internal static void RequestSync()
