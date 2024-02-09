@@ -2,32 +2,25 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Windows;
-
+using YippeeKey.ConfigSync;
 namespace YippeeKey
 {
     /// <summary>
     /// Main plugin class, required for the fun of it.
     /// </summary>
     [BepInPlugin(GUID, Name, Version)]
+    [BepInDependency("io.github.CSync")]
     internal class YippeeKeyPlugin : BaseUnityPlugin
     {
-        //Keycode, might be replaced with inpututils
-        public ConfigEntry<KeyCode> ConfigKey;
-        //Debug config, usable for debugging, not for public use.
-        public ConfigEntry<bool> DebugKey;
-        //Key to disable notifying game about sound
-        public ConfigEntry<bool> NotifyEnemies;
-        //Key to disable visuals of the mod (Particles)
-        public ConfigEntry<bool> AllowVisuals;
 
-
-        const string GUID = "QMLCYipeeKey_plugin";
-        const string Name = "Yippee key";
-        const string Version = "0.0.0.1";
+        public const string GUID = "QMLCYipeeKey_plugin";
+        public const string Name = "Yippee key";
+        public const string Version = "1.1.0.0";
 
         //AssetBundle
         public AssetBundle? MainAssetBundle;
@@ -35,6 +28,8 @@ namespace YippeeKey
         //No touchy, input
         public static YippeeKeyPlugin Instance;
 
+        public YippeeSyncedConfig GetConfig;
+        
         //No touchy, Harmony
         Harmony harmony = new Harmony("net.quadmesh.yippeekey.plugin");
 
@@ -50,41 +45,30 @@ namespace YippeeKey
                 Logger.LogInfo($"{MainAssetBundle.name} Should be loaded succesfully.");
             }
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), GUID);
+            harmony.PatchAll(typeof(YippeeSyncedConfig));
             NetcodePatcher();
             Logger.LogInfo("Yippe mod ready!");
-            Logger.LogInfo($"Debugging? [{(DebugKey.Value ? "Yes!" : "Nope.")}]");
-            Logger.LogInfo($"Key to use Yippe: '{ConfigKey.Value}'");
+            Logger.LogInfo($"Debugging? [{(YippeeSyncedConfig.Instance.DebugKey.Value ? "Yes!" : "Nope.")}]");
+            Logger.LogInfo($"Key to use Yippe: '{YippeeSyncedConfig.Instance.ConfigKey.Value}'");
         }
 
         //Easy way to log using the plugin logger, only used if Debug is enabled.
         public void Log(string message)
         {
-            if (DebugKey.Value) Logger.LogInfo(message);
+            if (YippeeSyncedConfig.Default.DebugKey.Value) Logger.LogInfo(message);
         }
+
+        //Same as above, but for errors, Ignores debug.
+        public void LogError(string message)
+        {
+            Logger.LogError(message);
+        }
+
 
         //Set up the config keys using this command, BepinEx handles it.
         private void SetupConfigKeys()
         {
-            ConfigKey = Config.Bind("Input",
-                "InputKeyYippeee",
-                KeyCode.I,
-                "The keycode you're using to SCREAM YIPPEE!"
-                );
-
-            AllowVisuals = Config.Bind("Visual",
-                "Add visuals",
-                true,
-                "Adds visuals like particles when shouting 'Yippee!'");
-
-            NotifyEnemies = Config.Bind("Gameplay",
-                "Notify Enemy AI (HOST ONLY)",
-                true,
-                "Notify Enemies when someone shouts 'Yippee!'. This setting will only apply if you are the host.");
-
-            DebugKey = Config.Bind("Misc",
-                "Show Debug Messages",
-                false,
-                "Whether or not debug messages appear inside the log");
+            GetConfig = new YippeeSyncedConfig(Config);
         }
 
         //Netcode stuff, requried for patching.

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.Netcode;
 using UnityEngine;
+using YippeeKey.ConfigSync;
 using YippeeKey.Patches;
 
 namespace YippeeKey.LocalScripts
@@ -23,7 +24,7 @@ namespace YippeeKey.LocalScripts
         public void Update()
         {
             //Input
-            if (!UnityInput.Current.GetKeyDown(YippeeKeyPlugin.Instance.ConfigKey.Value)) return;
+            if (!UnityInput.Current.GetKeyDown(YippeeSyncedConfig.Default.ConfigKey.Value)) return;
             //Is local (very important)
             if (!IsLocal()) return;
             //Is alive

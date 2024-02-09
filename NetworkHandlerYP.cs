@@ -10,7 +10,9 @@ namespace YippeeKey
 {
     public class NetworkHandlerYP : NetworkBehaviour
     {
-
+        /// <summary>
+        /// When the network object spawns, this procedure is called to make networking possible
+        /// </summary>
         public override void OnNetworkSpawn()
         {
             YippeeKeyPlugin.Instance.Log("Despawning NetworkObject");
@@ -33,6 +35,7 @@ namespace YippeeKey
             base.OnNetworkSpawn();
         }
 
+        //On sent to server: Sent to the rest of the lobby.
         [ServerRpc(RequireOwnership =false)]
         public void ScreamYippeeServerRPC(string eventName)
         {
@@ -42,6 +45,7 @@ namespace YippeeKey
             ScreamYippeeClientRPC(eventName);
         }
 
+        //On received: play yippe
         [ClientRpc]
         public void ScreamYippeeClientRPC(string eventName)
         {

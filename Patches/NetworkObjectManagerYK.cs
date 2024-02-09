@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity.Netcode;
 using UnityEngine;
+using YippeeKey.ConfigSync;
 using YippeeKey.LocalScripts;
 
 namespace YippeeKey.Patches
@@ -46,12 +47,13 @@ namespace YippeeKey.Patches
             //NetworkHandlerYP.ScreamYippeeEvent += ReceivedEventFromServer;
         }
 
-        /*[HarmonyPostfix, HarmonyPatch(typeof(GameNetworkManager), "StartDisconnect")]
+        [HarmonyPostfix, HarmonyPatch(typeof(GameNetworkManager), "StartDisconnect")]
         static void UnsubscribeFromHandler()
         {
-            YippeeKeyPlugin.Instance.Log("Destroying network prefab");
-            networkPrefab = null;
-        }*/
+            YippeeKeyPlugin.Instance.Log("UnSyncing config");
+            YippeeSyncedConfig.RevertSync();
+
+        }
 
         public static void SendEventToServer(string eventName)
         {
@@ -87,19 +89,15 @@ namespace YippeeKey.Patches
             //Play yippee noise
             yippeeSound?.Play();
             YippeeKeyPlugin.Instance.Log("Host could have alerted enemies.");
-
-            //Notify round that there has been a funny noise over here. ONLY IF SERVER.
-            if (GameNetworkManager.Instance.localPlayerController.IsServer)
+            //Notify enemies check
+            if (!YippeeSyncedConfig.Instance.NotifyEnemies.Value)
             {
-                //If the host of the game does not notify enemies, don't notify. Host's game, Host's rules.
-                if (!YippeeKeyPlugin.Instance.NotifyEnemies.Value)
-                {
-                    YippeeKeyPlugin.Instance.Log("Locally disabled notifying enemies.");
-                    return;
-                }
-                YippeeKeyPlugin.Instance.Log("Yippeed in the world, let's see where this goes...");
-                RoundManager.Instance.PlayAudibleNoise(playerTransform.position);
+                YippeeKeyPlugin.Instance.Log("disabled notifying enemies.");
+                return;
             }
+            
+            YippeeKeyPlugin.Instance.Log("Yippeed in the world, let's see where this goes...");
+            RoundManager.Instance.PlayAudibleNoise(playerTransform.position, YippeeSyncedConfig.Instance.EnemyAIDetectionRange.Value, YippeeSyncedConfig.Instance.EnemyAIDetectionVolume.Value);
         }
 
         static GameObject? networkPrefab = null;
