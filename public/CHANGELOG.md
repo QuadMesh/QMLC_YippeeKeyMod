@@ -1,6 +1,16 @@
 # Changelog
 
 <details>
+<summary>1.2.1</summary>
+
+## Changed
+
+- Updated Csync Dependncy from 1.0.6 to 1.0.7
+- Updated changelog file to fix spelling mistakes
+
+</details>
+<hr>
+<details>
 <summary>1.2.0</summary>
 
 ## Added
@@ -16,13 +26,14 @@
 ### Enjoy!!
 
 </details>
+<hr>
 
 <details>
 <summary>1.1.0</summary>
 
 ## Added
 
-- Walkie talkie now transmits Yippee's (minor oversight, my bad!)
+- Walkie talkie now transmits the sound when shouting 'Yippee!' (minor oversight, my bad!)
 - Added config value for the volume of shouting 'Yippee!'.
 - Added config value for how far the EnemyAI detection range is when shouting 'Yippee! (if enabled)
 - Added config value for how loud the EnemyAI detection volume is when shouting 'Yippee! (if enabled)
@@ -30,10 +41,10 @@
 
 ## Changed
 
-- Confetti spam has been reduced, but can be re-enabled in the configs for those who desperately want to cause confettti rain.
+- Confetti spam has been reduced, but can be re-enabled in the configs for those who desperately want to cause confetti rain.
 
 </details>
-
+<hr>
 <details>
 <summary>1.0.0</summary>
 
