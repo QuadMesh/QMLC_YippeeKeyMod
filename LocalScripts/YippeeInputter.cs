@@ -48,6 +48,8 @@ namespace YippeeKey.LocalScripts
             //Is in menu
             if (GameNetworkManager.Instance.localPlayerController.quickMenuManager.isMenuOpen) return;
 
+            if (GameNetworkManager.Instance.localPlayerController.isTypingChat) return;
+
             //Finally, run the event.
             NetworkObjectManagerYK.SendYippeeEventToServer(GameNetworkManager.Instance.localPlayerController.gameObject.name);
             //Restart cooldown.

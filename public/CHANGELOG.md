@@ -1,11 +1,21 @@
 # Changelog
 
 <details>
+<summary>1.2.2</summary>
+
+## Changed
+
+- Patched an issue where using chat could cause an unexpected 'Yippee!' to be shouted. [(Issue #1)](https://github.com/QuadMesh/QMLC_YippeeKeyMod/issues/1)
+- Patched an issue where stray confetti was spawned when dead players used 'Yippee!
+
+</details>
+<hr>
+<details>
 <summary>1.2.1</summary>
 
 ## Changed
 
-- Updated Csync Dependncy from 1.0.6 to 1.0.7
+- Updated Csync Dependency from 1.0.6 to 1.0.7
 - Updated changelog file to fix spelling mistakes
 
 </details>

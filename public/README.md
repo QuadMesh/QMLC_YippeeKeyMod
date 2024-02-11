@@ -11,6 +11,10 @@ The Yippee Key mod is a mod that will make you exclaim 'YIPPEE!' (keybind 'i' by
 
 ## Disclaimer: Yelling Yippee might attract enemies.
 
+# Support
+Have a question? Got a suggestion? You can let us know by [joining the Quadmesh discord.](https://discord.com/invite/3WJfUvPkTF)
+Alternatively, you can chat around in [the dedicated LC community channel.](https://discord.com/channels/1168655651455639582/1205557544223772672)
+
 # Credits
 ## Programming & Networking
 
