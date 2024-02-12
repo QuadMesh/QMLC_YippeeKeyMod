@@ -28,17 +28,25 @@ namespace YippeeKey.ConfigSync
         [DataMember] public SyncedEntry<float> EnemyAIDetectionVolume { get; private set; }
         [DataMember] public SyncedEntry<bool> CooldownEnabled { get; private set; }
         [DataMember] public SyncedEntry<float> CooldownTime { get; private set; }
+        //Allow dead players to 'yippee!'
+        [DataMember] public SyncedEntry<bool> DeadPlayersYippeeAlivePlayers { get; private set; }
+        //Dead players trigger EnemyAI
+        [DataMember] public SyncedEntry<bool> DeadPlayerAlertsEnemyAI { get; private set; }
+
         //Keycode, might be replaced with inpututils
         public ConfigEntry<KeyCode> ConfigKey { get; private set; }
         //Debug config, usable for debugging, not for public use.
         public ConfigEntry<bool> DebugKey { get; private set; }
         //Key to disable visuals of the mod (Particles)
         public ConfigEntry<bool> AllowVisuals { get; private set; }
-        //Allows particles to be spammed (pre 1.1.Oà
+        //Allows particles to be spammed (pre 1.1.O)
         public ConfigEntry<bool> AllowParticeSpam { get; private set; }
-
+        //Allows the Yippees to overlap (AUDIO)
+        public ConfigEntry<bool> AllowYippeeOverlap { get; private set; }
         //Key to set the volume of Yippee!
         public ConfigEntry<float> YippeeVolume { get; private set; }
+        //Allow randomy pitched Yippee!'s
+        public ConfigEntry<bool> RandomPitchedYippee { get; private set; }
 
         public YippeeSyncedConfig(ConfigFile cfg)
         {
@@ -60,9 +68,14 @@ namespace YippeeKey.ConfigSync
                "Enables cooldowns when you are hosting the instance");
 
             CooldownTime = cfg.BindSyncedEntry("Gameplay",
-                "Yippe cooldown time",
+                "Yippee cooldown time (HOST ONLY)",
                 2f,
                 "The time (in seconds) it will take for the cooldown to stop");
+
+            DeadPlayersYippeeAlivePlayers = cfg.BindSyncedEntry("Gameplay",
+                "Dead players can Yippee (HOST ONLY)",
+                true,
+                "Allow dead players to yippee");
 
             EnemyAIDetectionRange = cfg.Bind("Gameplay Advanced",
                 "EnemyAI detection range (HOST ONLY)",
@@ -75,10 +88,26 @@ namespace YippeeKey.ConfigSync
                 1f,
                 "Detection volume for EnemyAI when shouting 'Yippee!' (HOST ONLY)\nNote: This is NOT the volume of the sound, only the volume of which the EnemyAI component hears the sound.\nDo not mess with this value unless you know what you're doing!");
 
+            DeadPlayerAlertsEnemyAI = cfg.BindSyncedEntry("Gameplay Advanced",
+                "Dead players Yippee alerts AI (HOST ONLY)",
+                false,
+                "Dead players can yippe and alert AI (reduced range)");
+
             ConfigKey = cfg.Bind("Input",
                 "Yippee Key Binding",
                 KeyCode.I,
                 "The keybind you're using to shout 'Yippee!'");
+
+
+            RandomPitchedYippee = cfg.Bind("Audio",
+                "Randomly pitched yippee",
+                true,
+                "Makes the pitch of the 'Yippee' when shouting be randomized");
+
+            AllowYippeeOverlap = cfg.Bind("Audio",
+                "Allow overlapping Yippee",
+                false,
+                "Make the audio when spamming Yippe overlap instead of restarting\n(useful with 'Spam Particles')");
 
             AllowVisuals = cfg.Bind("Visual",
                 "Add visuals",
@@ -88,7 +117,7 @@ namespace YippeeKey.ConfigSync
             AllowParticeSpam = cfg.Bind("Visual",
                 "Spam particles",
                 false,
-                "Allows particles to be spammed");
+                "Allows particles to be spammed\n(useful with 'Allow Yippee Overlap')");
 
             DebugKey = cfg.Bind("Misc",
                 "Show Debug Messages",
@@ -106,6 +135,8 @@ namespace YippeeKey.ConfigSync
 
             orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
             config.Save();
+            
+            //Thanks KittenJI!
         }
 
         internal static void RequestSync()
@@ -174,6 +205,8 @@ namespace YippeeKey.ConfigSync
                 YippeeKeyPlugin.Instance.Log($"NotifyAI:\nlocal:{Default.NotifyEnemies.Value}\nSynced:{Instance.NotifyEnemies.Value}");
                 YippeeKeyPlugin.Instance.Log($"CooldownEnabled:\nlocal:{Default.CooldownEnabled.Value}\nSynced:{Instance.CooldownEnabled.Value}");
                 YippeeKeyPlugin.Instance.Log($"CooldownTime:\nlocal:{Default.CooldownTime.Value}\nSynced:{Instance.CooldownTime.Value}");
+                YippeeKeyPlugin.Instance.Log($"DeadPlayersCanYippee:\nlocal:{Default.DeadPlayersYippeeAlivePlayers.Value}\nSynced:{Instance.DeadPlayersYippeeAlivePlayers.Value}");
+                YippeeKeyPlugin.Instance.Log($"DeadPlayerAlertEnemyAI:\nlocal:{Default.DeadPlayerAlertsEnemyAI.Value}\nSynced:{Instance.DeadPlayerAlertsEnemyAI.Value}");
             }
             catch (Exception e)
             {

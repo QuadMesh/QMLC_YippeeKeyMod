@@ -9,7 +9,7 @@ using YippeeKey.Patches;
 
 namespace YippeeKey
 {
-    public class NetworkHandlerYP : NetworkBehaviour
+    public sealed class NetworkHandlerYP : NetworkBehaviour
     {
         /// <summary>
         /// When the network object spawns, this procedure is called to make networking possible
@@ -38,36 +38,20 @@ namespace YippeeKey
 
         //On sent to server: Sent to the rest of the lobby.
         [ServerRpc(RequireOwnership=false)]
-        public void ScreamYippeeServerRPC(string eventName)
+        public void ScreamYippeeServerRPC(string eventName, bool isCallerDead)
         {
             YippeeKeyPlugin.Instance.Log("Server event received");
-            NetworkObjectManagerYK.playYippeeAtPlayer(ref eventName);
+            //NetworkObjectManagerYK.playYippeeAtPlayer(ref eventName, ref isCallerDead);
             YippeeKeyPlugin.Instance.Log("Notifying Clients");
-            ScreamYippeeClientRPC(eventName);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void ScreamYippeeDeadServerRPC()
-        {
-            YippeeKeyPlugin.Instance.Log("Server event received");
-            NetworkObjectManagerYK.playYippeeAtMousePos();
-            YippeeKeyPlugin.Instance.Log("Notifying Clients");
-            ScreamYippeeDeadClientRPC();
+            ScreamYippeeClientRPC(eventName, isCallerDead);
         }
 
         //On received: play yippe
         [ClientRpc]
-        public void ScreamYippeeClientRPC(string eventName)
+        public void ScreamYippeeClientRPC(string eventName, bool isCallerDead)
         {
-            YippeeKeyPlugin.Instance.Log($"Event received from Server for {eventName}");
-            NetworkObjectManagerYK.playYippeeAtPlayer(ref eventName);
-        }
-
-        [ClientRpc]
-        public void ScreamYippeeDeadClientRPC()
-        {
-            YippeeKeyPlugin.Instance.Log($"Event received to play for dead player");
-            NetworkObjectManagerYK.playYippeeAtMousePos();
+                YippeeKeyPlugin.Instance.Log($"Event received from Server for {eventName}");
+                NetworkObjectManagerYK.playYippeeAtPlayer(ref eventName, ref isCallerDead);
         }
 
         public static NetworkHandlerYP Instance { get; private set; }

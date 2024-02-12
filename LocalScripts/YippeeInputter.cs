@@ -37,21 +37,15 @@ namespace YippeeKey.LocalScripts
             if (!UnityInput.Current.GetKeyDown(YippeeSyncedConfig.Default.ConfigKey.Value)) return;
             //Is local (very important)
             if (!IsLocal()) return;
-            //Is alive
-            if (GameNetworkManager.Instance.localPlayerController.isPlayerDead)
-            {
-                CheckDeadYippe();
-                return;
-            }
             //Is in terminal
             if (GameNetworkManager.Instance.localPlayerController.inTerminalMenu) return;
             //Is in menu
             if (GameNetworkManager.Instance.localPlayerController.quickMenuManager.isMenuOpen) return;
-
+            //Is tuping in chat
             if (GameNetworkManager.Instance.localPlayerController.isTypingChat) return;
 
             //Finally, run the event.
-            NetworkObjectManagerYK.SendYippeeEventToServer(GameNetworkManager.Instance.localPlayerController.gameObject.name);
+            NetworkObjectManagerYK.SendYippeeEventToServer(GameNetworkManager.Instance.localPlayerController.gameObject.name, GameNetworkManager.Instance.localPlayerController.isPlayerDead);
             //Restart cooldown.
             if (YippeeSyncedConfig.Instance.CooldownEnabled.Value)
             {
@@ -76,19 +70,6 @@ namespace YippeeKey.LocalScripts
                     YippeeKeyPlugin.Instance.Log("Cooldown has wore off, time to Yippee!");
                 }
                 return;
-            }
-        }
-
-        private void CheckDeadYippe()
-        {
-            if (GameNetworkManager.Instance.localPlayerController.quickMenuManager.isMenuOpen) return;
-            //Finally, run the event.
-            NetworkObjectManagerYK.SendYippeeDeadEventToServer();
-            //Restart cooldown.
-            if (YippeeSyncedConfig.Instance.CooldownEnabled.Value)
-            {
-                cooldownActive = true;
-                YippeeKeyPlugin.Instance.Log("Cooldown active");
             }
         }
 

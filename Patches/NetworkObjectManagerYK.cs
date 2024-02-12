@@ -11,8 +11,10 @@ using YippeeKey.LocalScripts;
 namespace YippeeKey.Patches
 {
     [HarmonyPatch]
-    public class NetworkObjectManagerYK
+    public sealed class NetworkObjectManagerYK
     {
+
+        public static Dictionary<string, YippeeSoundManager> soundManagers = new Dictionary<string, YippeeSoundManager>();
 
         [HarmonyPostfix, HarmonyPatch(typeof(GameNetworkManager), "Start")]
         public static void Init()
@@ -51,79 +53,52 @@ namespace YippeeKey.Patches
         static void UnsubscribeFromHandler()
         {
             YippeeKeyPlugin.Instance.Log("UnSyncing config");
+            soundManagers.Clear();
             YippeeSyncedConfig.RevertSync();
 
         }
 
-        public static void SendYippeeEventToServer(string eventName)
+        public static void SendYippeeEventToServer(string eventName, bool isCallerDead)
         {
             YippeeKeyPlugin.Instance.Log("Sending event to rest of lobby.");
-            NetworkHandlerYP.Instance.ScreamYippeeServerRPC(eventName);
+            NetworkHandlerYP.Instance.ScreamYippeeServerRPC(eventName, isCallerDead);
         }
 
-        public static void SendYippeeDeadEventToServer()
-        {
-            YippeeKeyPlugin.Instance.Log("Sending event to rest of lobby.");
-            NetworkHandlerYP.Instance.ScreamYippeeDeadServerRPC();
-        }
-
-        public static void playYippeeAtPlayer(ref string playerName)
+        public static void playYippeeAtPlayer(ref string playerName, ref bool isCallerDead)
         {
             //Very hacky, but it works for the most part.
-
-            //Save transform for use
-            Transform playerTransform = GameObject.Find(playerName).transform;
-            YippeeKeyPlugin.Instance.Log($"{playerName}'s transform captured.");
-
-            //Get the yippeesound manager from the player, can be null.
-            YippeeSoundManager yippeeSound = GameObject.Find(playerName).GetComponentInChildren<YippeeSoundManager>();
-            YippeeKeyPlugin.Instance.Log($"Attempted to get {playerName}'s Yippesound, Successful? {(yippeeSound != null ? "Yes!" : "Nope")}");
-            //Does the player not have a yippee controller? Add it.
-            if (yippeeSound == null)
+            if (!soundManagers.ContainsKey(playerName))
             {
-                YippeeKeyPlugin.Instance.Log("Yippee object didn't exist. creating.");
-                //Load prefab from assetbundle
-                GameObject yippee = (GameObject)YippeeKeyPlugin.Instance.MainAssetBundle.LoadAsset("YippeSound");
-                YippeeKeyPlugin.Instance.Log($"Prefab for use, loaded!");
-                GameObject yippeeSoundObject = GameObject.Instantiate(yippee, new Vector3(playerTransform.position.x, playerTransform.position.y + 2f, playerTransform.position.z), playerTransform.rotation, playerTransform);
-                YippeeKeyPlugin.Instance.Log($"{yippeeSoundObject.gameObject.name} Instantiated for use, loaded!");
-                yippeeSound = yippee.AddComponent<YippeeSoundManager>();
-                YippeeKeyPlugin.Instance.Log($"{yippeeSoundObject.name} component added, ready!");
+                YippeeKeyPlugin.Instance.LogError($"Unable to get sound manager for {playerName}!");
+                return;
             }
 
-            YippeeKeyPlugin.Instance.Log("Playing Yippe");
+            //Dead players can't yippee to alive players?
+            if (!YippeeSyncedConfig.Instance.DeadPlayersYippeeAlivePlayers.Value
+                && !GameNetworkManager.Instance.localPlayerController.isPlayerDead)
+                return;
+
+            GameObject playerToPlayAt = soundManagers[playerName].gameObject;
+            //Save transform for use
+            Transform playerTransform = playerToPlayAt.transform;
+            YippeeKeyPlugin.Instance.Log($"{playerName}'s transform gotten from dictionary.");
             //Play yippee noise
-            yippeeSound?.Play();
-            YippeeKeyPlugin.Instance.Log("Host could have alerted enemies.");
+            soundManagers[playerName].Play(isCallerDead);
             //Notify enemies check
             if (!YippeeSyncedConfig.Instance.NotifyEnemies.Value)
             {
-                YippeeKeyPlugin.Instance.Log("disabled notifying enemies.");
+                YippeeKeyPlugin.Instance.Log("Host-synced config dictates enemies are not alerted.");
+                return;
+            }
+
+            if (isCallerDead && !YippeeSyncedConfig.Instance.DeadPlayerAlertsEnemyAI.Value || !YippeeSyncedConfig.Instance.DeadPlayersYippeeAlivePlayers.Value)
+            {
+                YippeeKeyPlugin.Instance.Log("Host-synced config dictates Dead players cannot alert enemies.");
                 return;
             }
             
-            YippeeKeyPlugin.Instance.Log("Yippeed in the world, let's see where this goes...");
+            YippeeKeyPlugin.Instance.Log("Host-synced config dictates enemies are alerted.");
             RoundManager.Instance.PlayAudibleNoise(playerTransform.position, YippeeSyncedConfig.Instance.EnemyAIDetectionRange.Value, YippeeSyncedConfig.Instance.EnemyAIDetectionVolume.Value);
-        }
-
-        public static void playYippeeAtMousePos()
-        {
-            PlayerControllerB localPlayer = GameNetworkManager.Instance.localPlayerController;
-            if (localPlayer.isPlayerDead) {
-                YippeeKeyPlugin.Instance.Log("playing the effect.");
-                GameObject yippee2D = (GameObject)YippeeKeyPlugin.Instance.MainAssetBundle.LoadAsset("YippeSound2D");
-                yippee2D.AddComponent<ParticleObliterator2D>();
-                Camera camera = StartOfRound.Instance.activeCamera;
-
-                Vector3 spawnPos = camera.transform.position;
-                spawnPos.z += 10;
-
-                GameObject.Instantiate(yippee2D, spawnPos, camera.transform.rotation, camera.transform);
-            }
-            else
-            {
-                YippeeKeyPlugin.Instance.Log("Not dead yet, not playing that effect.");
-            }
         }
 
         static GameObject? networkPrefab = null;

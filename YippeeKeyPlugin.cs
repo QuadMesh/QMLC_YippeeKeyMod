@@ -15,12 +15,12 @@ namespace YippeeKey
     /// </summary>
     [BepInPlugin(GUID, Name, Version)]
     [BepInDependency("io.github.CSync")]
-    internal class YippeeKeyPlugin : BaseUnityPlugin
+    internal sealed class YippeeKeyPlugin : BaseUnityPlugin
     {
 
         public const string GUID = "QMLCYipeeKey_plugin";
         public const string Name = "Yippee key";
-        public const string Version = "1.2.2.0";
+        public const string Version = "1.3.0.0";
 
         //AssetBundle
         public AssetBundle? MainAssetBundle;

@@ -1,6 +1,28 @@
 # Changelog
 
 <details>
+<summary>1.3.0</summary>
+
+## Added
+- local pitch fluctuation to make shouting 'Yippee!' more fun.
+- Dead players may now be heard by alive players (very silently)
+- Config that dictates whether or not dead players can yippe to alive players [Default: on]
+- Config that dictates whether or not dead players alert Enemies [Default: off]
+- Config that allows 'Yippee!'s to fluctuate in pitch when shouted. [Default: on]
+- Config that allows 'Yippee!'s to overlap instead of restarting [Default: off]
+- Added more logging entries for these events.
+
+## Changed
+- Updated Csync Dependency from 1.0.7 to 1.0.8
+- Confetti now scales down over time, looks really nice!
+- Confetti now spawns in a circle around the player using noise to add a more 'weightless' feeling.
+- Reworked a majority of the networking code.
+- Certain config names changed
+
+</details>
+<hr>
+
+<details>
 <summary>1.2.2</summary>
 
 ## Changed
