@@ -1,6 +1,14 @@
 # Changelog
 
 <details>
+<summary>1.3.1</summary>
+
+## Changed
+- Fixed an issue that could occur when dying by certain events (Dead body being destroyed)
+</details>
+<hr>
+
+<details>
 <summary>1.3.0</summary>
 
 ## Added

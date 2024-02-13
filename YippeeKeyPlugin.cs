@@ -14,13 +14,13 @@ namespace YippeeKey
     /// Main plugin class, required for the fun of it.
     /// </summary>
     [BepInPlugin(GUID, Name, Version)]
-    [BepInDependency("io.github.CSync")]
+    [BepInDependency("io.github.CSync", BepInDependency.DependencyFlags.HardDependency)]
     internal sealed class YippeeKeyPlugin : BaseUnityPlugin
     {
 
         public const string GUID = "QMLCYipeeKey_plugin";
         public const string Name = "Yippee key";
-        public const string Version = "1.3.0.0";
+        public const string Version = "1.3.1.0";
 
         //AssetBundle
         public AssetBundle? MainAssetBundle;
@@ -48,7 +48,7 @@ namespace YippeeKey
             harmony.PatchAll(typeof(YippeeSyncedConfig));
             NetcodePatcher();
             Logger.LogInfo("Yippe mod ready!");
-            Logger.LogInfo($"Debugging? [{(YippeeSyncedConfig.Instance.DebugKey.Value ? "Yes!" : "Nope.")}]");
+            Logger.LogInfo($"Debugging? [{BeautifyBool(YippeeSyncedConfig.Instance.DebugKey.Value)}]");
             Logger.LogInfo($"Key to use Yippe: '{YippeeSyncedConfig.Instance.ConfigKey.Value}'");
         }
 
@@ -58,11 +58,15 @@ namespace YippeeKey
             if (YippeeSyncedConfig.Default.DebugKey.Value) Logger.LogInfo(message);
         }
 
-        //Same as above, but for errors, Ignores debug.
-        public void LogError(string message)
+        //It's a bit stupid, but it's to make the terminal look good.
+        public static string BeautifyBool(bool value)
         {
-            Logger.LogError(message);
+            return value ? "Yes!" : "Nope.";
         }
+
+        //Same as above, but for errors, Ignores debug.
+        public void LogError(string message) => Logger.LogError(message);
+        
 
 
         //Set up the config keys using this command, BepinEx handles it.

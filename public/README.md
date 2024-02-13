@@ -5,7 +5,7 @@ Ever had such a traumatising experience where one of your friends/teammates/enem
 Wish you could quickly exclaim your pure joy?
 Wish to exclaim your autistic tendencies using a simple sound?
 
-## Fret not! For this mod is for you!
+### **Fret not! For this mod is for you!**
 ### Introducing: Yippee Key!
 The Yippee Key mod is a mod that will make you exclaim 'YIPPEE!' (keybind 'i' by default) with some glitter and glamour!
 
