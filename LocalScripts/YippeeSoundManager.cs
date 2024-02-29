@@ -16,13 +16,14 @@ namespace YippeeKey.LocalScripts
     /// </summary>
     public sealed class YippeeSoundManager : MonoBehaviour
     {
-
         public AudioSource YippeeAudio { get; private set; } = null;
 
         public ParticleSystem[] ParticleSystems {get; private set; } = new ParticleSystem[3];
 
+        //playercontroller property, used for the public field below.
         private PlayerControllerB player;
 
+        //playercontroller field, used for the private property above.
         public PlayerControllerB Player { set
             {
                 player = value;
@@ -31,8 +32,10 @@ namespace YippeeKey.LocalScripts
             get { return player; }
         }
 
+        //Deadbody reference for effects.
         public DeadBodyInfo DeadBody;
 
+        //Reference to the GameNetworkManager's local playercontroller
         private bool IsLocalPlayerDead => GameNetworkManager.Instance.localPlayerController.isPlayerDead;
 
         public void Play(bool isCallerDead)
@@ -65,12 +68,14 @@ namespace YippeeKey.LocalScripts
             }
         }
 
+        //Destroy entry of the dictionairy, then add a brand new soundManager to the playerController.
         public void OnDestroy()
         {
             NetworkObjectManagerYK.soundManagers.Remove(Player.gameObject.name);
             PlayerControllerBPatch.AddSoundManagerToPlayer(Player);
         }
-
+        
+        //Play yippee!!
         private void PlayYippee()
         {
             if (Config.Default.AllowYippeeOverlap.Value)
@@ -86,7 +91,7 @@ namespace YippeeKey.LocalScripts
                 //Play the Audio
                 YippeeAudio.Play();
             }
-            YippeeKeyPlugin.Instance.Log($"Playing Yippee {YippeeAudio.enabled}");
+            YippeeKeyPlugin.Instance.Log($"Playing Yippee {YippeeKeyPlugin.BeautifyBool(YippeeAudio.enabled)}");
         }
 
         /// <summary>
@@ -135,6 +140,9 @@ namespace YippeeKey.LocalScripts
             }
         }
 
+        /// <summary>
+        /// Reset the effects, a clean slate to add new effects depending on the situation.
+        /// </summary>
         private void ResetEffects()
         {
             //Reset pitch

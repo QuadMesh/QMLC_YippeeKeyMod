@@ -1,6 +1,15 @@
 # Changelog
 
 <details>
+<summary>1.3.2</summary>
+
+## Changed
+- [(#2)](https://github.com/QuadMesh/QMLC_YippeeKeyMod/issues/2) Updated Csync dependancy to 2.0.0, fixing a game-breaking issue in the process.
+- [(#3)](https://github.com/QuadMesh/QMLC_YippeeKeyMod/issues/3) Fixed an issue that could occur when the Company building kills the player, that would cause the mod to stop working completely.
+</details>
+<hr>
+
+<details>
 <summary>1.3.1</summary>
 
 ## Changed

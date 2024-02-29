@@ -12,13 +12,16 @@ namespace YippeeKey.LocalScripts
 {
     public class YippeeInputter : MonoBehaviour
     {
+        //Reference to localPlayer
+        private PlayerControllerB? _localPlayer;
 
-        private PlayerControllerB _localPlayer;
-
+        //Local cooldown
         private bool cooldownActive = false;
 
+        //Local cooldown time
         private float cooldown = YippeeSyncedConfig.Instance.CooldownTime.Value;
 
+        //CooldownTime
         float CoolDownStartTime => YippeeSyncedConfig.Instance.CooldownTime.Value;
 
         private void Awake()
@@ -49,6 +52,7 @@ namespace YippeeKey.LocalScripts
             //Restart cooldown.
             if (YippeeSyncedConfig.Instance.CooldownEnabled.Value)
             {
+                //Reset the cooldown.
                 cooldownActive = true;
                 YippeeKeyPlugin.Instance.Log("Cooldown active");
             }
@@ -80,9 +84,6 @@ namespace YippeeKey.LocalScripts
         /// True: Local attached object is local player<br></br>
         /// False: Local attached object is Remote player
         /// </returns>
-        private bool IsLocal()
-        {
-            return _localPlayer.Equals(GameNetworkManager.Instance.localPlayerController);
-        }
+        private bool IsLocal() => _localPlayer.Equals(GameNetworkManager.Instance.localPlayerController);
     }
 }

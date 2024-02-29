@@ -52,10 +52,9 @@ namespace YippeeKey.Patches
         [HarmonyPostfix, HarmonyPatch(typeof(GameNetworkManager), "StartDisconnect")]
         static void UnsubscribeFromHandler()
         {
-            YippeeKeyPlugin.Instance.Log("UnSyncing config");
+            YippeeKeyPlugin.Instance.Log("UnSyncing config & Clearing Body references.");
             soundManagers.Clear();
-            YippeeSyncedConfig.RevertSync();
-
+            YippeeSyncedConfig.Instance.RevertSync();
         }
 
         public static void SendYippeeEventToServer(string eventName, bool isCallerDead)

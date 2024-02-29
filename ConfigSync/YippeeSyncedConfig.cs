@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using Unity.Collections;
@@ -196,7 +197,7 @@ namespace YippeeKey.ConfigSync
 
             try
             {
-                SyncInstance(data);
+                Instance.SyncInstance(data);
                 YippeeKeyPlugin.Instance.Log("Config Synced succesfully!");
                 YippeeKeyPlugin.Instance.Log($"Default config working? {(Default == null ? "Nope" : "Yes!")}");
                 YippeeKeyPlugin.Instance.Log($"Synced config working? {(Instance == null ? "Nope" : "Yes!")}");

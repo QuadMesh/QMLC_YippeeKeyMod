@@ -9,6 +9,9 @@ using YippeeKey.Patches;
 
 namespace YippeeKey
 {
+    /// <summary>
+    /// NetworkHandlerYP, Handles all networking inside the mod.
+    /// </summary>
     public sealed class NetworkHandlerYP : NetworkBehaviour
     {
         /// <summary>
@@ -54,6 +57,7 @@ namespace YippeeKey
                 NetworkObjectManagerYK.playYippeeAtPlayer(ref eventName, ref isCallerDead);
         }
 
+        //Instance used to reference to the networkObjects.
         public static NetworkHandlerYP Instance { get; private set; }
 
     }
